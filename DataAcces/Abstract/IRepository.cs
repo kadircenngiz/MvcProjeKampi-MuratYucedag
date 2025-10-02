@@ -10,6 +10,7 @@ namespace DataAcces.Abstract
     public interface IRepository<T>
     {
         List<T> List();
+        T Get(Expression<Func<T, bool>> filer);
         void Insert(T entity);
         void Update(T entity);
         void Delete(T entity);

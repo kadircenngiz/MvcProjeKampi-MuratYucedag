@@ -11,21 +11,30 @@ namespace DataAcces.Concrete.Repositories
 {
     public class GenericRepository<T> : IRepository<T> where T : class
     {
-        Context c=new Context();
+        Context c = new Context();
         DbSet<T> _object;
         public GenericRepository()
         {
-            _object= c.Set<T>();
+            _object = c.Set<T>();
         }
         public void Delete(T entity)
         {
-            _object.Remove(entity);
+            var deletedEntity = c.Entry(entity);
+            deletedEntity.State = EntityState.Deleted;
+            //_object.Remove(entity);
             c.SaveChanges();
+        }
+
+        public T Get(Expression<Func<T, bool>> filer)
+        {
+            return _object.SingleOrDefault(filer);
         }
 
         public void Insert(T entity)
         {
-            _object.Add(entity);
+            var addedEntity = c.Entry(entity);
+            addedEntity.State = EntityState.Added;
+            //_object.Add(entity);
             c.SaveChanges();
         }
 
@@ -41,7 +50,9 @@ namespace DataAcces.Concrete.Repositories
 
         public void Update(T entity)
         {
-          c.SaveChanges();
+            var updatedEntity = c.Entry(entity);
+            updatedEntity.State = EntityState.Modified;
+            c.SaveChanges();
         }
     }
 }
